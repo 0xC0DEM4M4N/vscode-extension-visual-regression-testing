@@ -1,0 +1,235 @@
+{
+  "name": "visual-regression-testing-with-playwright",
+  "displayName": "Visual Regression Testing with Playwright",
+  "description": "Automate Playwright visual regression testing with automatic main branch baseline comparison",
+  "version": "1.11.0",
+  "icon": "images/avatar.png",
+  "galleryBanner": {
+    "color": "#000000",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hmredmond/visual-regression-testing-vscode-extension"
+  },
+  "bugs": {
+    "url": "https://github.com/hmredmond/visual-regression-testing-vscode-extension/issues"
+  },
+  "homepage": "https://github.com/hmredmond/visual-regression-testing-vscode-extension#readme",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Testing"
+  ],
+  "keywords": [
+    "playwright",
+    "visual regression",
+    "testing",
+    "screenshots",
+    "visual testing",
+    "regression testing",
+    "ui testing",
+    "snapshot testing"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "visualRegressionTesting",
+          "title": "Visual Regression Testing",
+          "icon": "$(device-camera)"
+        }
+      ]
+    },
+    "views": {
+      "visualRegressionTesting": [
+        {
+          "type": "webview",
+          "id": "visualRegressionPanel",
+          "name": "Test Runner",
+          "icon": "$(device-camera)"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "visualRegression.runTest",
+        "title": "Run Test",
+        "category": "Visual Regression",
+        "icon": "$(beaker)"
+      },
+      {
+        "command": "visualRegression.runWorkflow",
+        "title": "Run Full Workflow",
+        "category": "Visual Regression",
+        "icon": "$(play)"
+      },
+      {
+        "command": "visualRegression.runChangedPages",
+        "title": "Run Tests for Changed Pages",
+        "category": "Visual Regression",
+        "icon": "$(git-compare)"
+      },
+      {
+        "command": "visualRegression.runSinglePage",
+        "title": "Run Test for Single Page",
+        "category": "Visual Regression",
+        "icon": "$(file)"
+      },
+      {
+        "command": "visualRegression.updateBaselines",
+        "title": "Update Baselines",
+        "category": "Visual Regression",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "visualRegression.showReport",
+        "title": "Show Playwright Report",
+        "category": "Visual Regression",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "visualRegression.cleanSnapshots",
+        "title": "Clean Snapshots",
+        "category": "Visual Regression",
+        "icon": "$(trash)"
+      }
+    ],
+    "configuration": {
+      "title": "Visual Regression Testing",
+      "properties": {
+        "visualRegression.mainBranch": {
+          "type": "string",
+          "default": "main",
+          "description": "Main branch name to use as baseline"
+        },
+        "visualRegression.baselineStrategy": {
+          "type": "string",
+          "enum": [
+            "worktree",
+            "checkout"
+          ],
+          "default": "worktree",
+          "enumDescriptions": [
+            "Capture the baseline from a separate git worktree of the main branch. Your working tree and current branch are never touched.",
+            "Legacy: check out the main branch in your working tree, capture, then switch back (discards uncommitted changes)."
+          ],
+          "description": "How the baseline is captured from the main branch"
+        },
+        "visualRegression.cacheBaseline": {
+          "type": "boolean",
+          "default": true,
+          "description": "Reuse the baseline screenshots until the main branch, the URLs, or the test files change"
+        },
+        "visualRegression.serverStartCommand": {
+          "type": "string",
+          "default": "npm run dev",
+          "description": "Command to start the dev server. Use {port} where the port goes (e.g. 'npm run dev -- -p {port}'); the PORT environment variable is also set. Required for the baseline server, which runs on a different port."
+        },
+        "visualRegression.serverPort": {
+          "type": "number",
+          "default": 3000,
+          "description": "Port where dev server runs"
+        },
+        "visualRegression.serverStartupTime": {
+          "type": "number",
+          "default": 5000,
+          "description": "Deprecated: the extension now polls until the server responds. Use visualRegression.serverStartupTimeout.",
+          "deprecationMessage": "Replaced by visualRegression.serverStartupTimeout - the extension now waits until the server responds instead of sleeping."
+        },
+        "visualRegression.serverStartupTimeout": {
+          "type": "number",
+          "default": 60000,
+          "description": "Maximum time (ms) to wait for a dev server to respond before giving up"
+        },
+        "visualRegression.testPath": {
+          "type": "string",
+          "default": "tests/visual",
+          "description": "Path to Playwright test files"
+        },
+        "visualRegression.environmentVariables": {
+          "type": "object",
+          "default": {},
+          "description": "Environment variables to pass to Playwright tests (e.g., NEXT_PUBLIC_PLAYWRIGHT=true)"
+        },
+        "visualRegression.testImportPath": {
+          "type": "string",
+          "default": "@playwright/test",
+          "description": "Import path for test and expect (e.g., '@playwright/test' or '../fixtures')"
+        },
+        "visualRegression.waitForSelector": {
+          "type": "string",
+          "default": "",
+          "description": "Optional CSS selector to wait for (e.g., loading spinner selector to wait for disappearance)"
+        },
+        "visualRegression.autoRunOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically run tests when files are saved"
+        },
+        "visualRegression.autoRunDelay": {
+          "type": "number",
+          "default": 2000,
+          "description": "Delay in milliseconds before auto-running tests after save"
+        },
+        "visualRegression.showStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show visual regression status in status bar"
+        },
+        "visualRegression.notifyOnCompletion": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show notification when tests complete"
+        }
+      }
+    },
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "visualRegression.runTest"
+        },
+        {
+          "command": "visualRegression.runWorkflow"
+        },
+        {
+          "command": "visualRegression.runChangedPages"
+        },
+        {
+          "command": "visualRegression.runSinglePage"
+        },
+        {
+          "command": "visualRegression.updateBaselines"
+        },
+        {
+          "command": "visualRegression.showReport"
+        },
+        {
+          "command": "visualRegression.cleanSnapshots"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "vsce-package": "vsce package",
+    "build-install": "npm run compile && rm -rf install/*.vsix && npm run package && cp *.vsix install/ && rm -rf *.vsix",
+    "install-extension": "code --install-extension visual-regression-testing-0.1.0.vsix"
+  },
+  "devDependencies": {
+    "@types/node": "^20.x",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^2.22.0",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.3.0",
+    "webpack": "^5.103.0",
+    "webpack-cli": "^6.0.1"
+  }
+}
